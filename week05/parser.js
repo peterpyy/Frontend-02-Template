@@ -76,7 +76,7 @@ function computeCSS(element){
         let matched = false;
         var j=1;
         for(var i=0;i<elements.length;i++){
-            if(match(elements[i],selectorParts[i])){
+            if(match(elements[i],selectorParts[j])){
                 j++;
             }
         }
@@ -86,7 +86,7 @@ function computeCSS(element){
         if(matched){
             var sp = specificity(rule.selectors[0]);
             var computedStyle = element.computedStyle;
-            for(var declaration of rule.declaration){
+            for(var declaration of rule.declarations){
                 if(!computedStyle[declaration.property]){
                     computedStyle[declaration.property] = {};
                 }
@@ -94,10 +94,13 @@ function computeCSS(element){
                     computedStyle[declaration.property].value = declaration.value;
                     computedStyle[declaration.property].specificity = sp;
                 }else if(compare(computedStyle[declaration.property].specificity,sp)<0){
-                    computedStyle[declaration.property].value = declaration.value;
-                    computedStyle[declaration.property].specificity = sp;
+                    for(let k=0;k<4;k++){
+                        computedStyle[declaration.property][declaration.value][k] = sp[k];
+                    }
+                    //computedStyle[declaration.property].value = declaration.value;
+                    //computedStyle[declaration.property].specificity = sp;
                 }
-                computedStyle[declaration.property].value = declaration.value;
+                //computedStyle[declaration.property].value = declaration.value;
             }
         }
     }
@@ -369,5 +372,5 @@ module.exports.parseHTML = function parseHTML(html){
         state = state(c);
     }
     state = state(EOF);
-    console.log(stack[0]);
+    return stack[0];
 }
