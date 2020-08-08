@@ -1,0 +1,4 @@
+思考题：
+    为什么 first-letter 可以设置 float 之类的，而 first-line 不行呢？（提交至 GitHub）
+
+    因为first-line是在布局之后渲染的结果，为避免first-line对布局的影响，所以不能再支持对布局的更改支持，而first-letter的操作是在布局之前就可以确定的，对first-letter的操作是和布局一起进行的，所以可以设置布局方面的属性功能
