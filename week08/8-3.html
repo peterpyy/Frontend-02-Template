@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>html api</title>
+    </head>
+    <body>
+        <script>
+            let names = Object.getOwnPropertyNames(window);//共817个
+            //console.log("所有api:"+names.toString());
+
+            function filterOut(names,props){
+                let set = new Set();
+                props.forEach(o => set.add(o));
+                return names.filter(e => !set.has(e));
+            }
+
+            //Subclass of Node           160个 DOM 中的元素构造器
+            names = names.filter(e => {
+                try{
+                    return !(window[e].prototype instanceof Node)
+                }catch(err){
+                    return true;
+                }
+            }).filter(e => e != "Node");
+
+            //JavaScript/ECMA 262 标准规定的属性
+            {
+                let js = new Set();
+                let objects = ["globalThis","console","BigInt", "BigInt64Array", "BigUint64Array", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "Date", "RegExp", "Promise", "Proxy", "Map", "WeakMap", "Set", "WeakSet", "Function", "Boolean", "String", "Number", "Symbol", "Object", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "ArrayBuffer", "SharedArrayBuffer", "DataView", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array", "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "Atomics", "JSON", "Math", "Reflect", "escape", "unescape"];
+                objects.forEach(o => js.add(o));
+                names = names.filter(e => !js.has(e));
+            }
+            
+            //window对象上的属性
+            {
+                let windowprops = new Set();
+                objects = ["window", "self", "document", "name", "location", "history", "customElements", "locationbar", "menubar", " personalbar", "scrollbars", "statusbar", "toolbar", "status", "close", "closed", "stop", "focus", " blur", "frames", "length", "top", "opener", "parent", "frameElement", "open", "navigator", "applicationCache", "alert", "confirm", "prompt", "print", "postMessage", "console"];
+                objects.forEach(o => windowprops.add(o));
+                names = names.filter(e => !windowprops.has(e));
+            }
+
+            //events  114 个
+            names = names.filter(e => !e.match(/^on/));
+
+            //webkit private 1 个
+            names = names.filter(e => !e.match(/^webkit/));
+
+            //HTML标准中接口
+            //https://html.spec.whatwg.org/
+            {
+                let interfaces = new Set();
+                objects = ["ApplicationCache", "AudioTrack", "AudioTrackList", "BarProp", "BeforeUnloadEvent", "BroadcastChannel", "CanvasGradient", "CanvasPattern", "CanvasRenderingContext2D", "CloseEvent", "CustomElementRegistry", "DOMStringList", "DOMStringMap", "DataTransfer", "DataTransferItem", "DataTransferItemList", "DedicatedWorkerGlobalScope", "Document", "DragEvent", "ErrorEvent", "EventSource", "External", "FormDataEvent", "HTMLAllCollection", "HashChangeEvent", "History", "ImageBitmap", "ImageBitmapRenderingContext", "ImageData", "Location", "MediaError", "MessageChannel", "MessageEvent", "MessagePort", "MimeType", "MimeTypeArray", "Navigator", "OffscreenCanvas", "OffscreenCanvasRenderingContext2D", "PageTransitionEvent", "Path2D", "Plugin", "PluginArray", "PopStateEvent", "PromiseRejectionEvent", "RadioNodeList", "SharedWorker", "SharedWorkerGlobalScope", "Storage", "StorageEvent", "TextMetrics", "TextTrack", "TextTrackCue", "TextTrackCueList", "TextTrackList", "TimeRanges", "TrackEvent", "ValidityState", "VideoTrack", "VideoTrackList", "WebSocket", "Window", "Worker", "WorkerGlobalScope", "WorkerLocation", "WorkerNavigator"];
+                objects.forEach(o => interfaces.add(o));
+                names = names.filter(e => !interfaces.has(e));
+            }
+
+            //ECMAScript 2018 Internationalization API
+            //http://www.ecma-international.org/ecma-402/5.0/index.html#Title
+            names = names.filter(e => e != "Intl");
+
+            //Streams 标准            
+            //https://streams.spec.whatwg.org/#blgs-class
+            names = filterOut(names, ["ReadableStream", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", "ReadableStreamDefaultController", "ReadableByteStreamController", "ReadableStreamBYOBRequest", "WritableStream", "WritableStreamDefaultWriter", "WritableStreamDefaultController", "TransformStream", "TransformStreamDefaultController", "ByteLengthQueuingStrategy", "CountQueuingStrategy"]);
+            
+            //WebGL标准
+            //https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15            
+            names = filterOut(names, ["WebGLContextEvent","WebGLObject", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation", "WebGLActiveInfo", "WebGLShaderPrecisionFormat", "WebGLRenderingContext"]);
+
+            //Web Audio API标准
+            //https://www.w3.org/TR/webaudio/
+            names = filterOut(names,["AudioContext", "AudioNode", "AnalyserNode", "AudioBuffer", "AudioBufferSourceNode", "AudioDestinationNode", "AudioParam", "AudioListener", "AudioWorklet", "AudioWorkletGlobalScope", "AudioWorkletNode", "AudioWorkletProcessor", "BiquadFilterNode", "ChannelMergerNode", "ChannelSplitterNode", "ConstantSourceNode", "ConvolverNode", "DelayNode", "DynamicsCompressorNode", "GainNode", "IIRFilterNode", "MediaElementAudioSourceNode", "MediaStreamAudioSourceNode", "MediaStreamTrackAudioSourceNode", "MediaStreamAudioDestinationNode", "PannerNode", "PeriodicWave", "OscillatorNode", "StereoPannerNode", "WaveShaperNode", "ScriptProcessorNode", "AudioProcessingEvent"]);
+
+            //Encoding 标准
+            //https://encoding.spec.whatwg.org/#dom-textencoder            
+            names = filterOut(names, ["TextDecoder", "TextEncoder", "TextDecoderStream", "TextEncoderStream"]);
+
+            //Web Background Synchronization 静默同步标准
+            //https://wicg.github.io/background-sync/spec/#api-description
+            //https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
+            names = filterOut(names,["SyncManager"]);
+
+            //Web Cryptography API 加密标准
+            //https://www.w3.org/TR/WebCryptoAPI/            
+            names = filterOut(names, ["CryptoKey", "SubtleCrypto", "Crypto", "crypto"]);
+
+            //Media Source Extensions 媒体标准
+            //https://www.w3.org/TR/media-source/            
+            names = filterOut(names, ["MediaSource", "SourceBuffer", "SourceBufferList"]);
+
+            //The Screen Orientation API 屏幕方向标准
+            //https://www.w3.org/TR/screen-orientation/
+            names = filterOut(names, ["ScreenOrientation"]);
+
+            //以下是作业
+            //WebGL 2 Api，WebGL: 2D and 3D graphics for the web
+            //https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API
+            names = filterOut(names, ["WebGLRenderingContext","WebGL2RenderingContext","WebGLActiveInfo","WebGLBuffer","WebGLContextEvent","WebGLFramebuffer","WebGLProgram","WebGLQuery","WebGLRenderbuffer","WebGLSampler","WebGLShader","WebGLShaderPrecisionFormat","WebGLSync","WebGLTexture","WebGLTransformFeedback","WebGLUniformLocation","WebGLVertexArrayObject"]);
+            
+            //WebRTC api
+            //https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+            names = filterOut(names, ["RTCPeerConnection","RTCSessionDescription","RTCIceCandidate","RTCPeerConnectionIceEvent","RTCPeerConnectionIceErrorEvent","RTCCertificate","RTCRtpSender","RTCRtpReceiver","RTCRtpTransceiver","RTCDtlsTransport","RTCIceTransport","RTCTrackEvent","RTCSctpTransport","RTCDataChannel","RTCDataChannelEvent","RTCDTMFSender","RTCDTMFToneChangeEvent","RTCStatsReport","RTCErrorEvent","RTCError"]);
+
+            //MediaStream Image Capture API
+            //https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Image_Capture_API
+            names = filterOut(names, ["ImageCapture","PhotoCapabilities","MediaSettingsRange","MediaRecorder","MediaEncryptedEvent","MediaCapabilities"]);
+            
+            //MediaStream API
+            //https://developer.mozilla.org/zh-CN/docs/Web/API/Media_Streams_API
+            names = filterOut(names, ["OverconstrainedError"]);
+
+            //https://w3c.github.io/mediacapture-main/#mediastreamtrack
+            names = filterOut(names, ["MediaStreamTrackEvent","MediaStreamTrack","MediaStreamEvent","MediaStream"]);
+            
+            //离线（后台）音频处理
+            //https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Audio_API
+            names = filterOut(names, ["OfflineAudioContext","OfflineAudioCompletionEvent"]);
+            
+            //Network Information API 
+            //https://wicg.github.io/netinfo/
+            names = filterOut(names, ["NavigatorNetworkInformation","NetworkInformation"]);
+
+            //IndexedDB API
+            //https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+            names = filterOut(names, ["indexedDB","IDBCursor","IDBCursorSync","IDBCursorWithValue","IDBDatabase","IDBDatabaseException","IDBDatabaseSync","IDBEnvironment","IDBEnvironmentSync","IDBFactory","IDBFactorySync","IDBIndex","IDBIndexSync","IDBKeyRange","IDBObjectStore","IDBObjectStoreSync","IDBOpenDBRequest","IDBRequest","IDBTransaction","IDBTransactionSync","IDBVersionChangeEvent","IDBVersionChangeRequest"]);
+
+            //Geolocation API
+            //https://developer.cdn.mozilla.net/en-US/docs/Web/API/Geolocation_API
+            names = filterOut(names, ["Geolocation","GeolocationCoordinates","GeolocationPosition","GeolocationPositionError"]);
+
+            //Gamepad API
+            //https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API
+            names = filterOut(names, ["Gamepad","GamepadButton","GamepadEvent","GamepadHapticActuator"]);
+            
+            //CSS Object Model (CSSOM)
+            //https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model
+            names = filterOut(names, ["AnimationEvent","CaretPosition","CSS","CSSConditionRule","CSSGroupingRule","CSSKeyframeRule","CSSKeyframesRule","CSSMediaRule","CSSNamespaceRule","CSSPageRule","CSSRule","CSSRuleList","CSSStyleDeclaration","CSSStyleRule","CSSStyleSheet","CSSSupportsRule","LinkStyle","MediaQueryList","MediaQueryListListener","Screen","StyleSheet","StyleSheetList","TransitionEvent"]);
+    
+            //CSS Typed Object Model 
+            //https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model#CSS_Typed_Object_Model
+            names = filterOut(names, ["CSSImageValue","CSSKeywordValue","CSSMathInvert","CSSMathMax","CSSMathMin","CSSMathNegate","CSSMathProduct","CSSMathSum","CSSMathValue","CSSMatrixComponent","CSSNumericArray","CSSNumericValue","CSSPerspective","CSSPositionValue","CSSRotate","CSSScale","CSSSkew","CSSSkewX","CSSSkewY","CSSStyleValue","CSSTransformComponent","CSSTransformValue","CSSTranslate","CSSUnitValue","CSSUnparsedValue","CSSVariableReferenceValue","StylePropertyMap","StylePropertyMapReadOnly"]);
+
+            //Geometry Interfaces Module Level 1 Editor’s Draft, 28 March 2020
+            //https://drafts.fxtf.org/geometry/#DOMQuad
+            names = filterOut(names, ["DOMPoint","DOMRect","DOMRectList","DOMQuad","DOMMatrix"]);
+
+            //WebXR Device API
+            //https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API
+            names = filterOut(names, ["XR","XRBoundedReferenceSpace","XRFrame","XRInputSource","XRInputSourceArray","XRInputSourceEvent","XRInputSourcesChangeEvent","XRPose","XRReferenceSpace","XRReferenceSpaceEvent","XRRenderState","XRRigidTransform","XRSession","XRSessionEvent","XRSpace","XRView","XRViewerPose","XRViewport","XRWebGLLayer"]);
+            
+            //Web USB api，超链接无法点击
+            names = filterOut(names, ["USB","USBAlternateInterface","USBConfiguration","USBConnectionEvent","USBDevice","USBEndpoint","USBInterface","USBInTransferResult","USBIsochronousInTransferPacket","USBIsochronousInTransferResult","USBIsochronousOutTransferPacket","USBIsochronousOutTransferResult","USBOutTransferResult"]);
+
+            //Web Bluetooth API
+            //https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API
+            names = filterOut(names, ["BluetoothUUID","Bluetooth","BluetoothCharacteristicProperties","BluetoothRemoteGATTCharacteristic","BluetoothRemoteGATTDescriptor","BluetoothRemoteGATTServer","BluetoothRemoteGATTService","BluetoothAdvertisingData","BluetoothDevice","BluetoothGATTCharacteristic","BluetoothGATTDescriptor","BluetoothGATTRemoteServer","BluetoothGATTService"]);
+
+            //SVGTransform
+            //https://developer.mozilla.org/zh-CN/docs/Web/API/SVGTransform
+            names = filterOut(names, ["SVGUnitTypes","SVGTransformList","SVGTransform","SVGStringList","SVGRect","SVGPreserveAspectRatio","SVGPointList","SVGPoint","SVGNumberList","SVGNumber","SVGMatrix","SVGLengthList","SVGLength","SVGAnimatedTransformList","SVGAnimatedString","SVGAnimatedRect","SVGAnimatedPreserveAspectRatio","SVGAnimatedNumberList","SVGAnimatedNumber","SVGAnimatedLengthList","SVGAnimatedLength","SVGAnimatedInteger","SVGAnimatedEnumeration","SVGAnimatedBoolean","SVGAnimatedAngle","SVGAngle"]);
+
+            //XML XMLHttpRequest Level 1
+            //https://www.w3.org/TR/XMLHttpRequest/
+            names = filterOut(names, ["XMLHttpRequest"]);
+
+
+            console.log(names.length+':'+names.toString());
+        </script>
+    </body>
+</html>
