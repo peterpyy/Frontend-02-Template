@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>TicTacToe</title>
+        <style>
+            .cell {
+                width: 100px;
+                height: 100px;
+                background-color:green;
+                display: inline-block;
+                border:solid 1px white;
+                vertical-align:middle;
+
+                line-height: 100px;
+                font-size: 50px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="board"></div>
+        <script>
+            let pattern = [
+                [2,0,0],
+                [0,1,0],
+                [0,0,0],
+            ]
+            
+            let color = 1;
+
+            function show(){
+                let board=document.getElementById("board");
+                let cellvalue;
+                board.innerText = "";
+                for(let i=0;i<3;i++){
+                    for(let j=0;j<3;j++){
+                        cellvalue = pattern[i][j];//i行j列
+                        let cell = document.createElement("div");
+                        cell.classList.add("cell");
+                        cell.innerText = cellvalue == 2 ? "X" : (cellvalue == 1 ? "O" : "");
+                        cell.addEventListener("click",() => move(j, i));
+                        board.appendChild(cell);
+                    }
+                    board.appendChild(document.createElement("br"));
+                }
+            }
+
+            function move(x,y){
+                if(pattern[y][x] != 0)return;
+                pattern[y][x] = color;
+                if(check()){
+                    alert(color == 2 ? "X is winner!":"O is winner!");
+                }
+                color=3-color;
+                show();
+            }
+
+            function check(){
+                for(let i = 0; i < 3;i++){
+                    let win = true;
+                    for(let j = 0;j<3;j++){
+                        if(pattern[i][j] !== color){
+                            win = false;
+                        }
+                    }
+                    if(win){
+                        return true;
+                    }
+                }
+                for(let i = 0; i < 3;i++){
+                    let win = true;
+                    for(let j = 0;j<3;j++){
+                        if(pattern[j][i] !== color){
+                            win = false;
+                        }
+                    }
+                    if(win){
+                        return true;
+                    }
+                }
+
+                {
+                    //右到左斜
+                    let win = true;
+                    for(let j=0;j<3;j++){
+                        if(pattern[j][2-j] !== color){
+                            win = false;
+                        }
+                    }
+                    if(win){
+                        return true;
+                    }
+                }
+
+                {
+                    //左到右斜
+                    let win = true;
+                    for(let j=0;j<3;j++){
+                        if(pattern[j][j] !== color){
+                            win = false;
+                        }
+                    }
+                    if(win){
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            show(pattern);
+            
+        </script>
+    </body>
+</html>

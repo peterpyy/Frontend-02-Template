@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>我实现的红绿灯</title>
+    <style>
+        .nolightbk {
+            background-color: white;
+        }
+        .greenlightbk{
+            background-color: green;
+        }
+        .yellowlightbk {
+            background-color: yellow;
+        }
+        .redlightbk {
+            background-color: red;
+        }
+        .greenlight,.yellowlight,.redlight {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            border:solid 1px white;
+            margin:30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="greenlight"  class="greenlight nolightbk"></div>
+    <div id="yellowlight" class="yellowlight nolightbk"></div>
+    <div id="redlight"    class="redlight nolightbk"></div>
+
+    <div id="status"></div>
+    <script>
+
+        let green_time = 0.1*1000;
+        let yellow_time = 0.1*1000;
+        let red_time = 0.1*1000;
+
+        let greenlight=document.getElementById("greenlight");
+        let yellowlight=document.getElementById("yellowlight");
+        let redlight=document.getElementById("redlight");
+
+        //显示消息
+        function showmsg(msg){
+            let mid=document.getElementById("status");
+            mid.innerText=msg;
+            console.log(msg);
+        }
+
+        //切换显示
+        //el：需要显示的元素
+        //cls:新的类名
+        function switchcolor(el,cls){
+            greenlight.classList.remove("greenlightbk");
+            yellowlight.classList.remove("yellowlightbk");
+            redlight.classList.remove("redlightbk");
+
+            greenlight.classList.remove("nolightbk");
+            yellowlight.classList.remove("nolightbk");
+            redlight.classList.remove("nolightbk");
+
+            if(el !== greenlight)greenlight.classList.add("nolightbk");
+            if(el !== yellowlight)yellowlight.classList.add("nolightbk");
+            if(el !== redlight)redlight.classList.add("nolightbk");
+
+            el.classList.add(cls);
+        }
+
+        //开始显示绿灯 10 秒
+        function StartShowGreenLight(){
+            switchcolor(greenlight,"greenlightbk");
+            showmsg("绿灯......");
+            setTimeout(
+                () => {StartShowYellowLight();}
+                ,green_time
+                );
+        }
+
+        //开始显示黄灯 2 秒
+        function StartShowYellowLight(){
+            switchcolor(yellowlight,"yellowlightbk");
+            showmsg("黄灯......");
+            setTimeout(
+                () => {StartShowRedLight();}
+                ,yellow_time
+                );
+        }
+
+        //开始显示红灯 5 秒
+        function StartShowRedLight(){
+            switchcolor(redlight,"redlightbk");
+            showmsg("红灯......");
+            setTimeout(
+                () => {StartShowGreenLight();}
+                ,red_time
+                );
+        }
+
+        StartShowGreenLight();
+    </script>    
+</body>
+</html>

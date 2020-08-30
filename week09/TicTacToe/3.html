@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>TicTacToe</title>
+        <style>
+            .cell {
+                width: 100px;
+                height: 100px;
+                background-color:green;
+                display: inline-block;
+                border:solid 1px white;
+                vertical-align:middle;
+
+                line-height: 100px;
+                font-size: 50px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="board"></div>
+        <script>
+            let pattern = [
+                [2,0,0],
+                [0,1,0],
+                [0,0,0],
+            ]
+            
+            let color = 1;
+
+            function show(){
+                let board=document.getElementById("board");
+                let cellvalue;
+                board.innerText = "";
+                for(let i=0;i<3;i++){
+                    for(let j=0;j<3;j++){
+                        cellvalue = pattern[i][j];//i行j列
+                        let cell = document.createElement("div");
+                        cell.classList.add("cell");
+                        cell.innerText = cellvalue == 2 ? "X" : (cellvalue == 1 ? "O" : "");
+                        cell.addEventListener("click",() => move(j, i));
+                        board.appendChild(cell);
+                    }
+                    board.appendChild(document.createElement("br"));
+                }
+            }
+
+            function move(x,y){
+                pattern[y][x] = color;
+                color=3-color;
+                show();
+            }
+
+            show(pattern);
+            
+        </script>
+    </body>
+</html>
