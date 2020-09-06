@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Trie</title>
+        
+    </head>
+    <body>
+        <button onclick="fn();">Trie</button>
+        <script>
+            
+            class Trie {
+                constructor(){
+                    this.root = Object.create(null);
+                }
+                insert(word){
+                    let node = this.root;
+                    for(let c of word){
+                        if(!node[c]){
+                            node[c]=Object.create(null);
+                        }
+                        node=node[c];
+                    }
+                    if(!("$" in node)){
+                        node["$"]=0;
+                    }
+                    node["$"]++;
+                }
+                most(){
+                    let max=0;
+                    let maxWord=null;
+                    let visit =(node,word)=>{
+                        if(node.$ && node.$>max){
+                            max=node.$;
+                            maxWord=word;
+                        }
+                        for(let p in node){
+                            visit(node[p],word+p);
+                        }
+                    }
+                    visit(this.root,"");
+                    consolt.log(maxWord);
+                }
+            }
+
+            function fn(){
+                //tokenize("1024 + 10*25");
+                for(let token of tokenize("1024 + 10*25")){
+                    console.log(token);
+                }
+            }
+        </script>
+    </body>
+</html>
