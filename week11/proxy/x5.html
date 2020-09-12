@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>proxy</title>
+        
+    </head>
+    <body>
+        <input id="r" type="range" min=0 max=255></input>
+        <input id="g" type="range" min=0 max=255></input>
+        <input id="b" type="range" min=0 max=255></input>
+        <div id="color" style="width:200px;height:100px;">
+        </div>
+        <button onclick="fn();">proxy</button>
+        <script>
+            let callbacks = new Map();
+            let reactivities = new Map();
+            let usedReactivities = [];
+
+            let object = {
+                r: 1,
+                g: 2,
+                b: 3
+            }
+
+            let po = reactive(object); 
+           
+            function effect(callback){
+                //callbacks.push(callback);
+                usedReactivities = [];
+                callback();
+                //console.log(usedReactivities);
+
+                for(let reactivity of usedReactivities)
+                {
+                    if(!callbacks.has(reactivity[0])){
+                        callbacks.set(reactivity[0],new Map());
+                    }
+                    if(!callbacks.get(reactivity[0]).has(reactivity[1])){
+                        callbacks.get(reactivity[0]).set(reactivity[1], []);
+                    }
+                    callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+                }
+            }
+
+            effect(()=>{
+                //console.log('po.a.b='+po.a.b+'，po.b='+po.b);
+                document.getElementById("r").value = po.r;
+            });
+            effect(()=>{
+                document.getElementById("g").value = po.g;
+            });
+            effect(()=>{
+                document.getElementById("b").value = po.b;
+            });
+
+            document.getElementById("r").addEventListener("input", event => po.r = event.target.value);
+            document.getElementById("g").addEventListener("input", event => po.g = event.target.value);
+            document.getElementById("b").addEventListener("input", event => po.b = event.target.value);
+
+
+            effect(()=>{
+                document.getElementById("color").style.backgroundColor = `rgb(${po.r},${po.g},${po.b})`;
+            });
+
+            function reactive(object){
+                if(reactivities.has(object)){
+                    return reactivities.get(object);
+                }
+
+                let proxy = new Proxy(object,{
+                    set(obj,prop,val){
+                        obj[prop]=val;
+                        if(callbacks.get(obj)){
+                            if(callbacks.get(obj).get(prop)){
+                                for(let callback of callbacks.get(obj).get(prop)){
+                                    callback();
+                                }
+                            }
+                        }
+                        return obj[prop];
+                    },
+                    get(obj,prop){
+                        //console.log(obj,prop);
+                        usedReactivities.push([obj, prop]);
+                        if(typeof obj[prop] === "object"){
+                            return reactive(obj[prop]);
+                        }
+                        return obj[prop];
+                    }
+                }); 
+
+                reactivities.set(object, proxy);
+
+                return proxy;
+            }
+
+            function fn(){
+                po.a=22;
+            }
+        </script>
+    </body>
+</html>

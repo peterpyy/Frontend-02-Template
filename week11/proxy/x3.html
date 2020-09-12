@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>proxy</title>
+        
+    </head>
+    <body>
+        <button onclick="fn();">proxy</button>
+        <script>
+            let callbacks = new Map();
+
+            let usedReactivities = [];
+
+            let object = {
+                a: 1,
+                b: 2
+            }
+
+            let po = reactive(object); 
+           
+            function effect(callback){
+                //callbacks.push(callback);
+                usedReactivities = [];
+                callback();
+                //console.log(usedReactivities);
+
+                for(let reactivity of usedReactivities)
+                {
+                    if(!callbacks.has(reactivity[0])){
+                        callbacks.set(reactivity[0],new Map());
+                    }
+                    if(!callbacks.get(reactivity[0]).has(reactivity[1])){
+                        callbacks.get(reactivity[0]).set(reactivity[1], []);
+                    }
+                    callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+                }
+            }
+
+            effect(()=>{
+                console.log('po.a='+po.a+'，po.b='+po.b);
+            });
+
+            function reactive(object){
+                return new Proxy(object,{
+                    set(obj,prop,val){
+                        obj[prop]=val;
+                        if(callbacks.get(obj)){
+                            if(callbacks.get(obj).get(prop)){
+                                for(let callback of callbacks.get(obj).get(prop)){
+                                    callback();
+                                }
+                            }
+                        }
+                        return obj[prop];
+                    },
+                    get(obj,prop){
+                        //console.log(obj,prop);
+                        usedReactivities.push([obj, prop]);
+                        return obj[prop];
+                    }
+                }); 
+            }
+
+            function fn(){
+                po.a=22;
+            }
+        </script>
+    </body>
+</html>
